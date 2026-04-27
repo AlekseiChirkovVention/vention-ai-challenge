@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ThumbsUp } from 'lucide-react';
+import { ThumbsUp, Eye, Bookmark } from 'lucide-react';
 
 type Tab = 'newest' | 'oldest' | 'popular';
 
@@ -75,6 +75,8 @@ export default function Comments() {
     setDraft('');
   }
 
+  const totalLikes = comments.reduce((sum, c) => sum + c.likes, 0);
+
   const sorted = [...comments].sort((a, b) => {
     if (tab === 'popular') return b.likes - a.likes;
     const da = a.date.split('/').reverse().join('');
@@ -149,6 +151,21 @@ export default function Comments() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="flex items-center gap-6 mt-6 pt-4 border-t text-sm text-slate-500">
+        <span className="flex items-center gap-1.5">
+          <ThumbsUp size={14} />
+          {totalLikes === 1 ? '1 person liked this' : `${totalLikes} people liked this`}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <Eye size={14} />
+          1582 Views
+        </span>
+        <button className="flex items-center gap-1.5 ml-auto hover:text-slate-700 transition-colors">
+          <Bookmark size={14} />
+          Save for later
+        </button>
       </div>
     </div>
   );

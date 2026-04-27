@@ -10,10 +10,6 @@ import Comments from './components/Comments';
 
 const employees = employeesData as Employee[];
 
-const globalRankMap = new Map<string, number>(
-  [...employees].sort((a, b) => b.total - a.total).map((e, i) => [e.id, i + 1]),
-);
-
 export default function App() {
   const [year, setYear] = useState<'all' | 2023 | 2024 | 2025>('all');
   const [quarter, setQuarter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4'>('all');
@@ -32,10 +28,10 @@ export default function App() {
     [year, quarter, category, search],
   );
 
-  const rankOf = (id: string) => globalRankMap.get(id) ?? 0;
+  const rankOf = (id: string) => filtered.findIndex(e => e.id === id) + 1;
 
-  const podiumEmployees = filtered.filter(e => rankOf(e.id) <= 3);
-  const listEmployees = filtered.filter(e => rankOf(e.id) > 3);
+  const podiumEmployees = filtered.slice(0, 3);
+  const listEmployees = filtered.slice(3);
 
   return (
     <div className="min-h-screen bg-slate-100 py-8 px-4">
