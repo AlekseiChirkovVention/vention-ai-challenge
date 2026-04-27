@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Star, ChevronDown, FlaskConical, Mic, GraduationCap, Presentation } from 'lucide-react';
 import type { Employee, Category } from '../types';
+import ActivityDetails from './ActivityDetails';
 
 interface LeaderRowProps {
   employee: Employee;
@@ -16,39 +18,50 @@ const categoryIcons: Record<Category, React.ReactNode> = {
 const categoryOrder: Category[] = ['LAB', 'PEG', 'UNI', 'EDU'];
 
 export default function LeaderRow({ employee, rank }: LeaderRowProps) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="border rounded-md p-3 flex items-center gap-4">
-      <span className="text-slate-400 w-8 text-center text-sm">{rank}</span>
-      <img
-        src={employee.avatar}
-        alt={employee.name}
-        className="w-10 h-10 rounded-full object-cover shrink-0"
-      />
-      <div className="flex flex-col min-w-0">
-        <span className="font-semibold text-sm truncate">{employee.name}</span>
-        <span className="text-xs text-slate-500 truncate">
-          {employee.title} ({employee.deptCode})
-        </span>
-      </div>
-      <div className="flex-1" />
-      <div className="flex items-end gap-3">
-        {categoryOrder.map(cat =>
-          employee.categories[cat] > 0 ? (
-            <div key={cat} className="flex flex-col items-center gap-0.5">
-              {categoryIcons[cat]}
-              <span className="text-xs text-slate-500">{employee.categories[cat]}</span>
-            </div>
-          ) : null,
-        )}
-      </div>
-      <div className="flex flex-col items-center ml-4">
-        <span className="text-[10px] text-slate-400 uppercase tracking-wide">TOTAL</span>
-        <div className="flex items-center gap-1">
-          <Star size={14} fill="currentColor" className="text-blue-500" />
-          <span className="text-blue-500 font-semibold text-sm">{employee.total}</span>
+    <div className="border rounded-md overflow-hidden">
+      <div
+        className="p-3 flex items-center gap-4 cursor-pointer"
+        onClick={() => setOpen(o => !o)}
+      >
+        <span className="text-slate-400 w-8 text-center text-sm">{rank}</span>
+        <img
+          src={employee.avatar}
+          alt={employee.name}
+          className="w-10 h-10 rounded-full object-cover shrink-0"
+        />
+        <div className="flex flex-col min-w-0">
+          <span className="font-semibold text-sm truncate">{employee.name}</span>
+          <span className="text-xs text-slate-500 truncate">
+            {employee.title} ({employee.deptCode})
+          </span>
         </div>
+        <div className="flex-1" />
+        <div className="flex items-end gap-3">
+          {categoryOrder.map(cat =>
+            employee.categories[cat] > 0 ? (
+              <div key={cat} className="flex flex-col items-center gap-0.5">
+                {categoryIcons[cat]}
+                <span className="text-xs text-slate-500">{employee.categories[cat]}</span>
+              </div>
+            ) : null,
+          )}
+        </div>
+        <div className="flex flex-col items-center ml-4">
+          <span className="text-[10px] text-slate-400 uppercase tracking-wide">TOTAL</span>
+          <div className="flex items-center gap-1">
+            <Star size={14} fill="currentColor" className="text-blue-500" />
+            <span className="text-blue-500 font-semibold text-sm">{employee.total}</span>
+          </div>
+        </div>
+        <ChevronDown
+          size={16}
+          className={`text-slate-400 ml-2 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+        />
       </div>
-      <ChevronDown size={16} className="text-slate-400 ml-2 shrink-0" />
+      {open && <ActivityDetails employee={employee} />}
     </div>
   );
 }
