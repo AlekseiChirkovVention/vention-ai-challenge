@@ -28,7 +28,7 @@ export default function Comments() {
       name: 'Taylor Placeholder',
       avatar: 'https://i.pravatar.cc/150?img=47',
       text:
-        'How to check your contributions:\nClick the arrow next to your name to expand your details. You\'ll see the categories where you earned points — Education, Public Speaking, University Partnership — along with the specific activities and dates.\n\nAbbreviations meaning:\n[LAB] — lab curators, lecturers, and mentors\n[PEG] — speakers at events and internal trainings in locations\n[UNI] — university speakers, academic practice curators, and other activities with universities\n[EDU] — speakers/performers at EDU events',
+        'How to view your activity breakdown:\nClick the arrow next to your name to expand the details panel. It lists each contribution by category, title, and date.\n\nCategory codes:\n[LAB] — lab mentoring and curation sessions\n[PEG] — public speaking and external event participation\n[UNI] — university-related activities and academic cooperation\n[EDU] — internal knowledge-sharing and educational events',
       date: '25/02/2026',
       likes: 1,
       edited: true,
@@ -38,7 +38,7 @@ export default function Comments() {
       name: 'Taylor Placeholder',
       avatar: 'https://i.pravatar.cc/150?img=47',
       text:
-        'What counts in 2025:\nEmployees in both production and non-production units can be recognized for: Mentoring, Labs, Public Speaking, DevDev, and University Partnership.\nManagers can be recognized for Public Speaking and University Partnership.',
+        'Recognized contribution types for this period:\nAll team members are eligible for: Lab Curation, Public Speaking, University Partnership, and Education events.\nPoints are awarded per verified activity in each category.',
       date: '25/02/2026',
       likes: 1,
       edited: true,
@@ -48,7 +48,7 @@ export default function Comments() {
       name: 'Jordan Sample',
       avatar: 'https://i.pravatar.cc/150?img=32',
       text:
-        'The list is in the final check (together with contributors and managers), so this is the moment to take a quick look and make sure nothing important is missing (or accidentally duplicated, especially mentoring).\nIf you spot something off, no drama, just drop an update via this form.\nWe want this thing to stay fair, transparent, and honest. No magic, no guessing.',
+        'The rankings are being finalized. Take a moment to review your entries and make sure everything looks accurate.\nIf anything seems off or is missing, reach out to the person who manages submissions.\nThe goal is to keep this fair and transparent for everyone.',
       date: '20/02/2026',
       likes: 2,
     },
