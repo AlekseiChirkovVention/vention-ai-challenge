@@ -56,6 +56,17 @@ function PodiumSlot({ employee, rank }: SlotProps) {
 }
 
 export default function Podium({ employees, rankOf }: PodiumProps) {
+  if (employees.length === 1) {
+    const sole = employees[0];
+    return (
+      <div className="flex items-end gap-2 mb-8">
+        <div className="flex-1" />
+        <PodiumSlot employee={sole} rank={rankOf(sole.id) as 1 | 2 | 3} />
+        <div className="flex-1" />
+      </div>
+    );
+  }
+
   const byRank = (r: 1 | 2 | 3) => employees.find(e => rankOf(e.id) === r);
   const first = byRank(1);
   const second = byRank(2);
