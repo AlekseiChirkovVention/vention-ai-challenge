@@ -2,11 +2,17 @@
 
 ## Approach
 
-The implementation followed a spec-driven, vibe-coding workflow using Claude Code (Anthropic's CLI AI assistant) inside the Windsurf IDE. The task description was treated as the single source of truth: every component, type, filter behavior, and deployment detail was derived from the spec. The AI assistant generated all source files following the phase-pipeline workflow (Discovery → Execution → Validation), ensuring the requirements were fully understood before any code was produced. Minor iterations followed to validate functionality and correct details.
+The work was split across three AI tools, each playing a distinct role:
+
+1. **Planning — ChatGPT:** Used in the early stage to break down the task, identify the key UI regions (podium, filters, leaderboard table, activity drawer), and define a rough component structure before any code was written.
+2. **Architecture — Claude:** Used to design the data model (`Employee`, `Category`, filter/sort logic), decide on the technology stack, and plan the folder structure and component responsibilities.
+3. **Implementation — Claude Code + Claude slash commands:** The actual source files were generated and iteratively refined using Claude Code (Anthropic's CLI) running inside the Windsurf IDE. Claude slash commands (`/phase-pipeline`, `/phase-execution`, `/phase-validation`, etc.) drove a structured Discovery → Execution → Validation workflow, ensuring each requirement was verified before moving on.
 
 ## Tools
 
-- **IDE:** Windsurf with Claude Code CLI (claude-sonnet-4-6)
+- **Planning:** ChatGPT
+- **Architecture:** Claude (claude.ai)
+- **Implementation:** Claude Code CLI (claude-sonnet-4-6) + Claude slash commands inside Windsurf IDE
 - **Build tool:** Vite 6 with @vitejs/plugin-react
 - **Language / framework:** TypeScript 5, React 18
 - **Styling:** TailwindCSS v3 (utility-first; no custom CSS beyond the three Tailwind directives)
