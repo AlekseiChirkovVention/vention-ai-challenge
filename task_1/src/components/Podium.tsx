@@ -63,9 +63,9 @@ export default function Podium({ employees, rankOf }: PodiumProps) {
 
   return (
     <div className="flex items-end gap-2 mb-8">
-      {second && <PodiumSlot employee={second} rank={2} />}
-      {first && <PodiumSlot employee={first} rank={1} />}
-      {third && <PodiumSlot employee={third} rank={3} />}
+      {second ? <PodiumSlot employee={second} rank={2} /> : <div className="flex-1" />}
+      {first ? <PodiumSlot employee={first} rank={1} /> : <div className="flex-1" />}
+      {third ? <PodiumSlot employee={third} rank={3} /> : <div className="flex-1" />}
     </div>
   );
 }
