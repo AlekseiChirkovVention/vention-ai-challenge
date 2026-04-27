@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Filters from './components/Filters';
 import Podium from './components/Podium';
 import LeaderList from './components/LeaderList';
+import Comments from './components/Comments';
 
 const employees = employeesData as Employee[];
 
@@ -47,6 +48,7 @@ export default function App() {
           <>
             <Podium employees={filtered.slice(0, 3)} />
             <LeaderList employees={filtered} />
+            <Comments />
           </>
         )}
       </div>
