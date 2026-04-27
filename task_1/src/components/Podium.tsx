@@ -11,45 +11,162 @@ interface SlotProps {
   rank: 1 | 2 | 3;
 }
 
-const badgeColor: Record<1 | 2 | 3, string> = {
-  1: 'bg-yellow-400',
-  2: 'bg-slate-400',
-  3: 'bg-amber-700',
+const AVATAR_BORDER: Record<1 | 2 | 3, { color: string; width: string }> = {
+  1: { color: '#F5A623', width: '3px' },
+  2: { color: '#B0BEC5', width: '2px' },
+  3: { color: '#B0BEC5', width: '2px' },
 };
 
-const blockStyle: Record<1 | 2 | 3, string> = {
-  1: 'bg-yellow-300 h-40',
-  2: 'bg-slate-200 h-28',
-  3: 'bg-slate-200 h-24',
+const BADGE_BG: Record<1 | 2 | 3, string> = {
+  1: '#F5A623',
+  2: '#B0BEC5',
+  3: '#795548',
+};
+
+const BLOCK_BG: Record<1 | 2 | 3, string> = {
+  1: '#F5C842',
+  2: '#E0E4EA',
+  3: '#E0E4EA',
+};
+
+const BLOCK_NUMBER_COLOR: Record<1 | 2 | 3, string> = {
+  1: '#C8890A',
+  2: '#9BA8BB',
+  3: '#9BA8BB',
+};
+
+const BLOCK_HEIGHT: Record<1 | 2 | 3, number> = {
+  1: 160,
+  2: 112,
+  3: 112,
 };
 
 function PodiumSlot({ employee, rank }: SlotProps) {
-  const avatarSize = rank === 1 ? 'w-24 h-24' : 'w-20 h-20';
+  const avatarSize = rank === 1 ? 80 : 65;
+  const isFirst = rank === 1;
+  const { color: borderColor, width: borderWidth } = AVATAR_BORDER[rank];
 
   return (
-    <div className="flex flex-col items-center flex-1">
-      <div className="relative mb-2">
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+      {/* Avatar */}
+      <div style={{ position: 'relative', width: avatarSize, height: avatarSize, marginBottom: 8 }}>
         <img
           src={employee.avatar}
           alt={employee.name}
-          className={`${avatarSize} rounded-full object-cover`}
+          style={{
+            width: avatarSize,
+            height: avatarSize,
+            borderRadius: '50%',
+            objectFit: 'cover',
+            border: `${borderWidth} solid ${borderColor}`,
+            display: 'block',
+          }}
         />
         <span
-          className={`absolute bottom-0 right-0 ${badgeColor[rank]} text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center`}
+          style={{
+            position: 'absolute',
+            bottom: -2,
+            right: -2,
+            width: 22,
+            height: 22,
+            borderRadius: '50%',
+            background: BADGE_BG[rank],
+            color: '#ffffff',
+            fontSize: 12,
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            lineHeight: 1,
+          }}
         >
           {rank}
         </span>
       </div>
-      <p className="font-semibold text-sm text-center">{employee.name}</p>
-      <p className="text-xs text-slate-500 text-center mb-1">
-        {employee.title} ({employee.deptCode})
+
+      {/* Name */}
+      <p
+        style={{
+          fontWeight: 700,
+          color: '#1a1a1a',
+          fontSize: 16,
+          margin: '0 0 2px',
+          textAlign: 'center',
+          lineHeight: 1.2,
+        }}
+      >
+        {employee.name}
       </p>
-      <div className="flex items-center gap-1 mb-2">
-        <Star size={14} fill="currentColor" className="text-blue-500" />
-        <span className="text-blue-500 font-semibold text-sm">{employee.total}</span>
+
+      {/* Title */}
+      <p
+        style={{
+          color: '#757575',
+          fontSize: 12,
+          fontWeight: 400,
+          margin: '0 0 8px',
+          textAlign: 'center',
+          lineHeight: 1.3,
+        }}
+      >
+        {employee.title}
+      </p>
+
+      {/* Star score pill */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+          background: isFirst ? '#F5A623' : '#ffffff',
+          border: isFirst ? 'none' : '1px solid #CFD4DC',
+          borderRadius: 20,
+          padding: '6px 16px',
+          marginBottom: 10,
+        }}
+      >
+        <Star
+          size={14}
+          fill={isFirst ? '#ffffff' : '#F5A623'}
+          color={isFirst ? '#ffffff' : '#F5A623'}
+        />
+        <span
+          style={{
+            fontWeight: 700,
+            fontSize: 14,
+            color: isFirst ? '#ffffff' : '#1a1a1a',
+          }}
+        >
+          {employee.total}
+        </span>
       </div>
-      <div className={`${blockStyle[rank]} w-full rounded-t-sm flex items-center justify-center`}>
-        <span className="text-7xl font-black text-white/40 select-none">{rank}</span>
+
+      {/* Podium block (avatar overlaps top slightly via negative margin) */}
+      <div
+        style={{
+          width: '100%',
+          height: BLOCK_HEIGHT[rank],
+          background: BLOCK_BG[rank],
+          borderRadius: '8px 8px 0 0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          marginTop: -6,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 90,
+            fontWeight: 900,
+            color: BLOCK_NUMBER_COLOR[rank],
+            opacity: 0.45,
+            userSelect: 'none',
+            lineHeight: 1,
+          }}
+        >
+          {rank}
+        </span>
       </div>
     </div>
   );
@@ -59,10 +176,13 @@ export default function Podium({ employees, rankOf }: PodiumProps) {
   if (employees.length === 1) {
     const sole = employees[0];
     return (
-      <div className="flex items-end gap-2 mb-8">
-        <div className="flex-1" />
+      <div
+        style={{ background: '#ffffff', display: 'flex', alignItems: 'flex-end', gap: 16 }}
+        className="mb-8 px-4"
+      >
+        <div style={{ flex: 1 }} />
         <PodiumSlot employee={sole} rank={rankOf(sole.id) as 1 | 2 | 3} />
-        <div className="flex-1" />
+        <div style={{ flex: 1 }} />
       </div>
     );
   }
@@ -73,10 +193,13 @@ export default function Podium({ employees, rankOf }: PodiumProps) {
   const third = byRank(3);
 
   return (
-    <div className="flex items-end gap-2 mb-8">
-      {second ? <PodiumSlot employee={second} rank={2} /> : <div className="flex-1" />}
-      {first ? <PodiumSlot employee={first} rank={1} /> : <div className="flex-1" />}
-      {third ? <PodiumSlot employee={third} rank={3} /> : <div className="flex-1" />}
+    <div
+      style={{ background: '#ffffff', display: 'flex', alignItems: 'flex-end', gap: 16 }}
+      className="mb-8 px-4"
+    >
+      {second ? <PodiumSlot employee={second} rank={2} /> : <div style={{ flex: 1 }} />}
+      {first ? <PodiumSlot employee={first} rank={1} /> : <div style={{ flex: 1 }} />}
+      {third ? <PodiumSlot employee={third} rank={3} /> : <div style={{ flex: 1 }} />}
     </div>
   );
 }
