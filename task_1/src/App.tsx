@@ -10,6 +10,10 @@ import Comments from './components/Comments';
 
 const employees = employeesData as Employee[];
 
+const globalRankMap = new Map<string, number>(
+  [...employees].sort((a, b) => b.total - a.total).map((e, i) => [e.id, i + 1]),
+);
+
 export default function App() {
   const [year, setYear] = useState<'all' | 2023 | 2024 | 2025>('all');
   const [quarter, setQuarter] = useState<'all' | 'Q1' | 'Q2' | 'Q3' | 'Q4'>('all');
@@ -27,6 +31,11 @@ export default function App() {
         .sort((a, b) => b.total - a.total),
     [year, quarter, category, search],
   );
+
+  const rankOf = (id: string) => globalRankMap.get(id) ?? 0;
+
+  const podiumEmployees = filtered.filter(e => rankOf(e.id) <= 3);
+  const listEmployees = filtered.filter(e => rankOf(e.id) > 3);
 
   return (
     <div className="min-h-screen bg-slate-100 py-8 px-4">
@@ -46,8 +55,10 @@ export default function App() {
           <p className="text-center text-slate-500 py-16">No employees match the filters.</p>
         ) : (
           <>
-            <Podium employees={filtered.slice(0, 3)} />
-            <LeaderList employees={filtered} />
+            {podiumEmployees.length > 0 && (
+              <Podium employees={podiumEmployees} rankOf={rankOf} />
+            )}
+            <LeaderList employees={listEmployees} rankOf={rankOf} />
             <Comments />
           </>
         )}

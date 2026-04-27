@@ -3,6 +3,7 @@ import type { Employee } from '../types';
 
 interface PodiumProps {
   employees: Employee[];
+  rankOf: (id: string) => number;
 }
 
 interface SlotProps {
@@ -54,8 +55,11 @@ function PodiumSlot({ employee, rank }: SlotProps) {
   );
 }
 
-export default function Podium({ employees }: PodiumProps) {
-  const [first, second, third] = employees;
+export default function Podium({ employees, rankOf }: PodiumProps) {
+  const byRank = (r: 1 | 2 | 3) => employees.find(e => rankOf(e.id) === r);
+  const first = byRank(1);
+  const second = byRank(2);
+  const third = byRank(3);
 
   return (
     <div className="flex items-end gap-2 mb-8">
