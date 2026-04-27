@@ -2,7 +2,7 @@
 
 ## Approach
 
-The implementation followed a spec-driven, vibe-coding workflow using Claude Code (Anthropic's CLI AI assistant) inside the Windsurf IDE. The task description was treated as the single source of truth: every component, type, filter behavior, and deployment detail was prescribed by the spec, so no architectural decisions were needed. The AI assistant generated all files in one continuous pass following the phase-pipeline workflow (Discovery → Execution → Validation), ensuring the spec was read and understood before a single line of code was written.
+The implementation followed a spec-driven, vibe-coding workflow using Claude Code (Anthropic's CLI AI assistant) inside the Windsurf IDE. The task description was treated as the single source of truth: every component, type, filter behavior, and deployment detail was derived from the spec. The AI assistant generated all source files following the phase-pipeline workflow (Discovery → Execution → Validation), ensuring the requirements were fully understood before any code was produced. Minor iterations followed to validate functionality and correct details.
 
 ## Tools
 
@@ -21,7 +21,7 @@ All 40 employee records are purely synthetic: first names are drawn from a fixed
 
 ## Trade-offs
 
-The original Vention leaderboard lives inside a SharePoint site that includes a top navigation bar, breadcrumb trail, and a threaded comments section at the bottom. These are SharePoint platform chrome, not part of the leaderboard widget itself, so they were explicitly excluded per §12 of the task spec. The chevron icon on each row is decorative only (row expansion was out of scope). Pagination and virtualization were omitted because 40 rows scroll naturally. No dark mode, tests, or i18n were implemented, again per the spec's out-of-scope list.
+The original leaderboard lives inside a SharePoint site that includes a top navigation bar and breadcrumb trail — those are platform chrome, not part of the leaderboard widget, so they were excluded. Each row supports expand/collapse to reveal a per-employee activity breakdown (category, title, date, points), which is implemented via the `ActivityDetails` component. Pagination and virtualization were omitted because 40 rows scroll naturally without them. No dark mode, tests, or i18n were added, as none were part of the requirements.
 
 ## Live link
 
