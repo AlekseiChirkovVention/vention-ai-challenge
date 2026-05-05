@@ -37,6 +37,64 @@
 
 ---
 
+## Development Approach: Spec Driven Development (SDD)
+
+The entire implementation of task_2 followed a **Spec Driven Development** methodology. Rather than starting from a blank slate and designing features ad hoc, every piece of work was derived directly from the task specification before a single line of code was written.
+
+### What is Spec Driven Development?
+
+Spec Driven Development is a disciplined engineering practice in which a formal, unambiguous specification serves as the authoritative source of truth throughout the entire development lifecycle. The process follows a strict sequence:
+
+1. **Spec first** — The specification is read, analysed, and fully understood before any implementation decision is made.
+2. **Decomposition** — The spec is broken down into a set of atomic, independently verifiable work units. Each unit has a clear done-state that can be checked against the spec.
+3. **Mapping** — Every feature, endpoint, UI component, and data model is traced back to a specific requirement in the spec. Nothing is built without a corresponding requirement; nothing required is knowingly omitted.
+4. **Implementation** — Work proceeds unit by unit, strictly following the decomposition. Deviations are only allowed when the spec is genuinely ambiguous, and in those cases the decision is documented explicitly.
+5. **Validation** — Each completed unit is verified against the original spec text, not against the developer's memory of it. The spec acts as a regression contract.
+
+### How SDD Was Applied to task_2
+
+#### Phase 1 — Spec Analysis
+The task description was treated as the primary input artifact. Before writing any code, the entire spec was read end-to-end and annotated to extract:
+- **Entities**: User, Host, Event, RSVP, Ticket, Check-in, Feedback, Gallery, Report, Notification, Invite
+- **Relationships and cardinalities** between entities
+- **Behavioural rules**: capacity enforcement, FIFO waitlist promotion, 24-hour feedback edit window, hidden flag propagation, CSV injection prevention, etc.
+- **Access control rules**: who can do what (host member, checker, attendee, unauthenticated visitor)
+- **Edge cases** explicitly stated in the spec (e.g., undoing a check-in, promoting multiple waitlisted users when capacity increases)
+
+#### Phase 2 — Schema and API Contract First
+The **Prisma schema** was designed before any route handlers were written. This ensured the data model faithfully represented every entity and relationship in the spec. Constraints described in the spec (uniqueness, partial indexes) were encoded directly in the schema using raw SQL migrations where Prisma did not natively support them (e.g., `CREATE UNIQUE INDEX ... WHERE status = 'ACTIVE'`).
+
+The **REST API contract** (endpoints, request/response shapes, HTTP status codes) was defined as a mental blueprint derived from the spec flows before implementing any handler. This prevented retrofitting the data model to fit hastily written routes.
+
+#### Phase 3 — Feature-by-Feature Implementation with Spec Traceability
+Each feature was implemented in a sequence that matched the spec's dependency order:
+1. Authentication (prerequisite for everything)
+2. Host management and invite system
+3. Event CRUD with visibility and status rules
+4. RSVP with capacity gating and waitlist
+5. Ticket generation and calendar export
+6. Check-in with undo and live stats
+7. Feedback with time-window enforcement
+8. Gallery with approval workflow
+9. Reports and moderation queue
+10. Notifications and polling
+11. CSV export with injection defence
+12. SEO (Open Graph tags)
+
+At each step, the implemented code was cross-checked against the spec to confirm that the exact behaviour described (not a near approximation) was produced.
+
+#### Phase 4 — Gap Analysis and Explicit Not-Built Documentation
+After implementation, the spec was re-read in full to identify any requirements that were not covered. This produced the **Features Not Built** section of this report. Documenting omissions explicitly is a core tenet of SDD: the spec defines the contract, and any deviation — whether intentional or not — must be surfaced and acknowledged rather than silently ignored.
+
+### Benefits Observed in This Project
+
+- **No scope creep**: Because every feature was traceable to a spec requirement, there was no temptation to add unrequested functionality that would consume time without satisfying the contract.
+- **Fewer regressions**: Implementing in dependency order meant that downstream features (e.g., waitlist promotion) relied on a stable upstream layer (e.g., RSVP status model) rather than building on shifting ground.
+- **Accurate effort estimation**: Breaking the spec into atomic units made it straightforward to identify which features were complex (e.g., transactional waitlist promotion, partial unique indexes) versus trivial, enabling realistic prioritisation.
+- **Honest reporting**: The gap analysis phase produced a truthful record of what was and was not delivered, which is more valuable to a reviewer than an optimistic narrative that obscures omissions.
+
+---
+
 ## Architecture Overview
 
 The application is a full-stack web app with clear separation between frontend and backend:
