@@ -1,5 +1,42 @@
 # Project Report — EventPlatform
 
+## Tools and Techniques Used
+
+### Languages & Runtimes
+- **TypeScript** — used for both frontend and backend to catch type errors at compile time
+- **Node.js 20** — runtime for the Express server
+
+### Frontend
+- **React 18** + **Vite** — SPA framework and dev server with HMR
+- **Tailwind CSS** — utility-first styling
+- **React Router v6** — client-side routing
+- **react-helmet-async** — Open Graph meta tag injection
+- **qrcode.react** — QR code generation for tickets
+
+### Backend
+- **Express.js** — HTTP server and REST API
+- **Prisma ORM** — database schema management, migrations, and query builder
+- **SQLite** — zero-config embedded database (via Prisma)
+- **bcrypt** — password hashing (10 salt rounds)
+- **jsonwebtoken** — stateless JWT authentication
+- **tsx** — TypeScript execution for server without a compile step
+- **multer** — file upload middleware (used for gallery flow)
+
+### DevOps & Tooling
+- **Render.com** — full-stack deployment (Node.js Web Service with ephemeral SQLite)
+- **GitHub** — version control and public repository hosting
+- **Windsurf (Cascade AI)** — AI-assisted coding for scaffolding, code review, and feature implementation
+
+### Techniques
+- **Polling** (10s check-in stats, 30s notifications) instead of WebSockets for simplicity
+- **FIFO waitlist promotion** via ordered Prisma queries and `$transaction` to avoid double-booking
+- **Idempotent seed** using deterministic string IDs and `upsert` to allow re-runs without duplication
+- **CSV injection defense** — all cell values prefixed to neutralise formula injection
+- **Partial unique indexes** — SQLite `CREATE UNIQUE INDEX ... WHERE` for check-in and report dedup
+- **Hidden flag propagation** — moderated content uses a `hidden` boolean; no cascading deletes
+
+---
+
 ## Architecture Overview
 
 The application is a full-stack web app with clear separation between frontend and backend:
