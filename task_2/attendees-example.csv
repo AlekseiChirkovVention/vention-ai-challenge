@@ -1,0 +1,5 @@
+Name,Email,RSVP Status,Check-in Time
+Demo Attendee,attendee@example.com,confirmed,2025-06-15T18:30:00.000Z
+Alice Johnson,alice@example.com,confirmed,2025-06-15T18:32:00.000Z
+Bob Smith,bob@example.com,confirmed,
+Charlie Brown,charlie@example.com,waitlist,
