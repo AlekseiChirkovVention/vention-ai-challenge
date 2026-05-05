@@ -1,0 +1,182 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String         @id @default(cuid())
+  email             String         @unique
+  password          String
+  name              String?
+  createdAt         DateTime       @default(now())
+  events            Event[]
+  rsvps             RSVP[]
+  hosts             Host[]
+  hostMembers       HostMember[]
+  checkinsPerformed Checkin[]      @relation("CheckinPerformer")
+  checkinsUndone    Checkin[]      @relation("CheckinUndoer")
+  notifications     Notification[]
+  feedback          Feedback[]
+  galleryUploaded   GalleryPhoto[] @relation("GalleryUploader")
+  reports           Report[]
+}
+
+model Event {
+  id            String         @id @default(cuid())
+  title         String
+  description   String?
+  date          DateTime
+  endDate       DateTime?
+  timezone      String         @default("UTC")
+  capacity      Int?
+  venueAddress  String?
+  onlineLink    String?
+  coverImageUrl String?
+  visibility    String         @default("public")
+  status        String         @default("published")
+  isPaid        Boolean        @default(false)
+  hidden        Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  creatorId     String
+  hostId        String?
+  creator       User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  host          Host?          @relation(fields: [hostId], references: [id], onDelete: SetNull)
+  rsvps         RSVP[]
+  checkins      Checkin[]
+  feedback      Feedback[]
+  gallery       GalleryPhoto[]
+}
+
+enum RSVPStatus {
+  CONFIRMED
+  WAITLISTED
+}
+
+model RSVP {
+  id        String     @id @default(cuid())
+  userId    String
+  eventId   String
+  status    RSVPStatus @default(CONFIRMED)
+  createdAt DateTime   @default(now())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event     Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticket    Ticket?
+
+  @@unique([userId, eventId])
+  @@index([eventId, status])
+}
+
+model Ticket {
+  id        String    @id @default(cuid())
+  rsvpId    String    @unique
+  code      String    @unique @default(cuid())
+  createdAt DateTime  @default(now())
+  rsvp      RSVP      @relation(fields: [rsvpId], references: [id], onDelete: Cascade)
+  checkins  Checkin[]
+}
+
+model Checkin {
+  id            String    @id @default(cuid())
+  ticketId      String
+  eventId       String
+  checkedInBy   String
+  checkedInAt   DateTime  @default(now())
+  undone        Boolean   @default(false)
+  undoneAt      DateTime?
+  undoneBy      String?
+  ticket        Ticket    @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  event         Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  performer     User      @relation("CheckinPerformer", fields: [checkedInBy], references: [id])
+  undoPerformer User?     @relation("CheckinUndoer", fields: [undoneBy], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  payload   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+}
+
+model GalleryPhoto {
+  id              String    @id @default(cuid())
+  eventId         String
+  imageUrl        String
+  uploadedBy      String
+  approved        Boolean   @default(false)
+  approvedBy      String?
+  approvedAt      DateTime?
+  pendingApproval Boolean   @default(true)
+  hidden          Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  event           Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  uploader        User      @relation("GalleryUploader", fields: [uploadedBy], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id         String    @id @default(cuid())
+  reporterId String
+  targetType String
+  targetId   String
+  reason     String
+  status     String    @default("pending")
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  reporter   User      @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@index([targetType, targetId])
+  @@index([status])
+}
+
+model Host {
+  id           String       @id @default(cuid())
+  ownerId      String
+  name         String
+  logoUrl      String?
+  bio          String?
+  contactEmail String
+  slug         String       @unique
+  createdAt    DateTime     @default(now())
+  owner        User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members      HostMember[]
+  events       Event[]
+
+  @@index([slug])
+}
+
+model HostMember {
+  id          String   @id @default(cuid())
+  hostId      String
+  userId      String?
+  role        String
+  inviteToken String?  @unique
+  createdAt   DateTime @default(now())
+  host        Host     @relation(fields: [hostId], references: [id], onDelete: Cascade)
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([hostId])
+  @@index([userId])
+  @@index([inviteToken])
+}
