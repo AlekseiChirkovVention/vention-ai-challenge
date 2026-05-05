@@ -3,3 +3,6 @@ dist/
 *.local
 .env
 .DS_Store
+.idea/
+.claude/
+tasks/
